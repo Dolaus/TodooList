@@ -14,7 +14,19 @@ namespace TodooList.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var Todo = _context.ToDo.ToList();
+            var User = _context.User.ToList();
             return View(await _context.User.ToListAsync());
+        }
+        [HttpGet]
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id==null)
+            {
+                return NotFound();
+            }
+            var user = _context.User.Include(u => u.TodoList).ToList().Find(u=>u.Id==id);
+            return View(user);
         }
     }
 }

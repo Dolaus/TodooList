@@ -13,7 +13,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+                @Html.DisplayNameFor(model => model.Id) 
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -22,7 +22,7 @@
                 @Html.DisplayNameFor(model => model.Year)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TodoList[0].Description)
+                @Html.DisplayNameFor(model => model.TodoList)
             </th>
             <th></th>
         </tr>
@@ -40,7 +40,15 @@
                 @Html.DisplayFor(modelItem => item.Year)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TodoList[0].Description)
+                @if (item.TodoList.Count>0)
+                    {
+                        @Html.DisplayFor(modelItem => item.TodoList[0].Description)
+                    }
+                    else
+                    {
+                    @Html.DisplayFor(modelItem => item.TodoList);     
+                    }
+                   
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
