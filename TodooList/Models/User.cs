@@ -1,5 +1,8 @@
-﻿namespace TodooList.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TodooList.Models
 {
+    [Table("User")]
     public class User
     {
         public int Id { get; set; }

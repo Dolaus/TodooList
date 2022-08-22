@@ -5,55 +5,48 @@
 
 <h1>Details</h1>
 
+<div>
+    <h4>Details</h4>
+    
+    </hr>
+    <dl class="row">
+        <dt class="col-sm-2">
+             @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+             @Html.DisplayFor(modelItem => modelItem.Name)
+        </dd>
+        <dt class="col-sm-2">
+             @Html.DisplayNameFor(model => model.Year)
+        </dt>
+        <dd class="col-sm-10">
+             @Html.DisplayFor(modelItem => modelItem.Year)
+        </dd>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id) 
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Year)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TodoList)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-         <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => modelItem.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => modelItem.Year)
-                    </td>
-                </tr>
-        @if (Model.TodoList.Count > 0)
+
+         <h4>
+             @Html.DisplayNameFor(model => model.TodoList)
+        </h4>
+        <div class="col-6 text-right">
+            <a asp-controller="Todo" asp-action="Create" asp-route-id="@Model.Id" class=" btn btn-primary">
+                 Create new Todo
+            </a> 
+        </div>
+        <dd class="col-sm-10">
+
+        </dd>
+         @if (Model.TodoList.Count > 0)
         {
-           
-
             @foreach (var item in Model.TodoList)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Id)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
+                <dd class="col-sm-10">
+                    
+                     @Html.DisplayFor(modelItem => item.Description)
+                     <a asp-action="Edit" asp-route-id="@item.User">Edit</a> |
+                     <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
+                </dd>  
             }
-
         }
-    </tbody>
-</table>
+    </dl>
+</div>
+

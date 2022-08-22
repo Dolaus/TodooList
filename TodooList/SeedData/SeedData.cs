@@ -25,8 +25,7 @@ namespace TodooList.Models
                     {
                        Name = "Petro",
                        Year = 2003,
-                       TodoList = new List<ToDo> { new ToDo { IsComplete =false,Description="Make a cake" },
-                           new ToDo { IsComplete = false, Description = "Workout" } }
+                       TodoList = new List<ToDo> { new ToDo {Description="Go to the shop"} }
                     },
                     new User
                     {

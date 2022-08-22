@@ -11,6 +11,10 @@ namespace TodooList.Data
 
         public AppDBContext(DbContextOptions<AppDBContext> options) 
            : base(options) 
-        { Database.EnsureCreated(); }
-    }
+        {
+            //Database.EnsureDeleted();
+            Database.EnsureCreated(); 
+        }
+
+        }
 }
