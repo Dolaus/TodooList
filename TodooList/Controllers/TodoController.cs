@@ -17,19 +17,35 @@ namespace TodooList.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(ToDo todo,int id)
+        public IActionResult Create(ToDo todo, int id)
         {
-            User user = _context.User.Find(id);
-            ToDo newTodo2= new ToDo()
+            ToDo newTodo = new ToDo()
             {
                 IsComplete = todo.IsComplete,
                 Description = todo.Description,
-                User=user
+                UserId = id
             };
-            _context.ToDo.Add(newTodo2);
+            _context.ToDo.Add(newTodo);
             _context.SaveChanges();
 
-            return RedirectToAction("Index","User");
+            return RedirectToAction("Details", "User",new {id=id});
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            if (id==null)
+            {
+                return NotFound();
+            }
+            var todo = _context.ToDo.Find(id);
+            if (todo == null)
+            {
+                return NotFound();
+            }
+            _context.ToDo.Remove(todo);
+            _context.SaveChanges();
+            return RedirectToAction("Details", "User",new { id = todo.UserId }) ; 
         }
     }
 }

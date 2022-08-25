@@ -31,9 +31,22 @@ namespace TodooList.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Create(User user)
         {
-            return View(user);
+            if (ModelState.IsValid)
+            {
+                _context.User.Add(user);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else { return View(); }
+            
         }
     }
 }
