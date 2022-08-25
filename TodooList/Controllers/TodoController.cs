@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TodooList.Data;
 using TodooList.Models;
 
@@ -46,6 +47,37 @@ namespace TodooList.Controllers
             _context.ToDo.Remove(todo);
             _context.SaveChanges();
             return RedirectToAction("Details", "User",new { id = todo.UserId }) ; 
+        }
+
+
+        [HttpGet]
+        public IActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var todo = _context.ToDo.Find(id);
+            if (todo == null)
+            {
+                return NotFound();
+            }
+            return View(todo);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(ToDo todo,int id)
+        {
+            var todos = _context.ToDo.Find(id);
+            todos.Description=todo.Description;
+            todos.IsComplete = todo.IsComplete;
+            //if (ModelState.IsValid)
+            {
+                _context.ToDo.Update(todos);
+                _context.SaveChanges();
+                return RedirectToAction("Index", "User");
+            }
+            return View();
         }
     }
 }

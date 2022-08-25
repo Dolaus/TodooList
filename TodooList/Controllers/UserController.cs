@@ -71,5 +71,32 @@ namespace TodooList.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public IActionResult Edit(int? id)
+        {
+            if (id==null||id==0)
+            {
+               return NotFound();
+            }
+            var user = _context.User.Find(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+        [HttpPost]
+        public IActionResult Edit(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.User.Update(user);
+                _context.SaveChanges();
+                return RedirectToAction("index");
+            }
+            return View();
+        }
     }
 }

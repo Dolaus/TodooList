@@ -42,7 +42,7 @@
                 <dd class="col-sm-10">
                     
                      @Html.DisplayFor(modelItem => item.Description)
-                     <a asp-action="Edit" asp-route-id="@item.User">Edit</a> |
+                     <a asp-controller="ToDo" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                      <a asp-controller="ToDo" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </dd>  
             }
