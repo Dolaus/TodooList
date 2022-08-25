@@ -45,8 +45,31 @@ namespace TodooList.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            else { return View(); }
-            
+            else { return View(); } 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var user = _context.User.Include(i=>i.TodoList).FirstOrDefault(u=>u.Id==id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var user = _context.User.Find(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            _context.User.Remove(user);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }
