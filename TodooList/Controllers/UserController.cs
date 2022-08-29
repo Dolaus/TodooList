@@ -8,8 +8,10 @@ namespace TodooList.Controllers
     public class UserController : Controller
     {
         private readonly AppDBContext _context;
-        public UserController(AppDBContext context)
+        private readonly IWebHostEnvironment _webHostEnviroment;
+        public UserController(AppDBContext context, IWebHostEnvironment webHostEnviroment)
         {
+            _webHostEnviroment = webHostEnviroment;
             _context = context;
         }
 
@@ -48,8 +50,24 @@ namespace TodooList.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(User user)
         {
+            
             if (ModelState.IsValid)
             {
+                var fileimages = HttpContext.Request.Form.Files;
+                if (fileimages.Count > 0)
+                {
+                    var webpath = _webHostEnviroment.WebRootPath;
+                    string upload = webpath + URL.ImageUserURL;
+                    string imageName = Guid.NewGuid().ToString();
+                    string imageextension = Path.GetExtension(fileimages[0].FileName);
+
+                    using (var fileStream = new FileStream(Path.Combine(upload, imageName + imageextension), FileMode.Create))
+                    {
+                        fileimages[0].CopyTo(fileStream);
+                    }
+                    user.Image = imageName + imageextension;
+                }
+            
                 _context.User.Add(user);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
@@ -72,11 +90,24 @@ namespace TodooList.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var user = _context.User.Find(id);
+
+
             if (user == null)
             {
                 return NotFound();
             }
-            _context.User.Remove(user);
+            var webpath = _webHostEnviroment.WebRootPath;
+            string upload = webpath + URL.ImageUserURL;
+
+            if (user.Image != null)
+            {
+                var oldFile = Path.Combine(upload, user.Image);
+                if (System.IO.File.Exists(oldFile))
+                {
+                    System.IO.File.Delete(oldFile);
+                }
+            }
+           _context.User.Remove(user);
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -99,8 +130,42 @@ namespace TodooList.Controllers
         [HttpPost]
         public IActionResult Edit(User user)
         {
+            var objFromdb = _context.User.AsNoTracking().FirstOrDefault(u => u.Id == user.Id);
+            if (objFromdb == null)
+            {
+                return NotFound();
+            }
             if (ModelState.IsValid)
             {
+                var fileimages = HttpContext.Request.Form.Files;
+                if (fileimages.Count > 0)
+                {
+                    var webpath = _webHostEnviroment.WebRootPath;
+                    string upload = webpath + URL.ImageUserURL;
+                    string imageName = Guid.NewGuid().ToString();
+                    string imageextension = Path.GetExtension(fileimages[0].FileName);
+
+                    if (objFromdb.Image != null)
+                    {
+                        var oldFile = Path.Combine(upload, objFromdb.Image);
+                        if (System.IO.File.Exists(oldFile))
+                        {
+                            System.IO.File.Delete(oldFile);
+                            using (var fileStream = new FileStream(Path.Combine(upload, imageName + imageextension), FileMode.Create))
+                            {
+                                fileimages[0].CopyTo(fileStream);
+                            }
+                        }                        
+                    }
+                    else
+                    {
+                        using (var fileStream = new FileStream(Path.Combine(upload, imageName + imageextension), FileMode.Create))
+                        {
+                            fileimages[0].CopyTo(fileStream);
+                        }
+                    }
+                    user.Image = imageName + imageextension;
+                }
                 _context.User.Update(user);
                 _context.SaveChanges();
                 return RedirectToAction("index");
