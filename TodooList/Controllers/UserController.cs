@@ -13,11 +13,20 @@ namespace TodooList.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page=1)
         {
-            var Todo = _context.ToDo.ToList();
-            var User = _context.User.ToList();
-            return View(await _context.User.ToListAsync());
+            int pageSize = 3;
+            IQueryable<User> source= _context.User.Include(i => i.TodoList);
+            var count= await source.CountAsync();
+            var items= await source.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            IndexViewModel viewModel = new IndexViewModel
+            {
+                PageViewModel = pageViewModel,
+                Users = items
+            };
+            return View(viewModel);
+
         }
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
