@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TodooList.Data;
 using TodooList.Models;
+using TodooList.Services.Class;
+using TodooList.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,9 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddScoped<IFiltrator<User>,Filtrator>();
+builder.Services.AddScoped<IPaginator<User>,Paginator>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -20,6 +25,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
 
     SeedData.Initialize(services);
+    
 }
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

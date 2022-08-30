@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TodooList.Data;
 using TodooList.Models;
+using TodooList.Services.Interface;
 
 namespace TodooList.Controllers
 {
@@ -9,25 +10,23 @@ namespace TodooList.Controllers
     {
         private readonly AppDBContext _context;
         private readonly IWebHostEnvironment _webHostEnviroment;
-        public UserController(AppDBContext context, IWebHostEnvironment webHostEnviroment)
+        private readonly IFiltrator<User> _filtrator;
+        private readonly IPaginator<User> _paginator;
+        public UserController(AppDBContext context, IWebHostEnvironment webHostEnviroment, IFiltrator<User> filtrator, IPaginator<User> paginator)
         {
             _webHostEnviroment = webHostEnviroment;
             _context = context;
+            _filtrator = filtrator;
+            _paginator = paginator;
         }
 
-        public async Task<IActionResult> Index(int page=1)
+        public async Task<IActionResult> Index(string searchstring,int page=1)
         {
-            int pageSize = 3;
             IQueryable<User> source= _context.User.Include(i => i.TodoList);
-            var count= await source.CountAsync();
-            var items= await source.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
-            IndexViewModel viewModel = new IndexViewModel
-            {
-                PageViewModel = pageViewModel,
-                Users = items
-            };
-            return View(viewModel);
+
+            source = _filtrator.Filter(source, searchstring);
+
+            return View(await _paginator.Pagination(3, source, page)) ;
 
         }
         [HttpGet]
