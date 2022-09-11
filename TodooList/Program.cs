@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using TodooList.Data;
 using TodooList.Models;
@@ -13,10 +14,18 @@ builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AppDBContext")));
 
 
-builder.Services.AddAuthentication()
-    .AddCookie(options =>
-    { options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login"); });
+//services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//               .AddCookie(options => //CookieAuthenticationOptions
+//               {
+//                   options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+//                   options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+//               });
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    { options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+      options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+    });
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodooList.Data;
 using TodooList.Models;
+using TodooList.Models.ViewModels;
 using TodooList.Services.Interface;
 
 namespace TodooList.Controllers
 {
+    
     public class UserController : Controller
     {
         private readonly AppDBContext _context;
@@ -29,6 +32,7 @@ namespace TodooList.Controllers
             return View(await _paginator.Pagination(3, source, page)) ;
 
         }
+        [Authorize(Roles = "user")]
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
@@ -114,22 +118,29 @@ namespace TodooList.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            if (id==null||id==0)
+            if (id == null || id == 0)
             {
-               return NotFound();
+                return NotFound();
             }
-            var user = _context.User.Find(id);
+            User user = _context.User.Find(id);
             if (user == null)
             {
                 return NotFound();
             }
+            var model = new AddInformationAboutUserViewModel()
+            {
+                Id = user.Id,
+                Image = user.Image,
+                Name = user.Name,
+                Year = user.Year
+            };
 
-            return View(user);
+            return View(model);
         }
         [HttpPost]
-        public IActionResult Edit(User user)
+        public IActionResult Edit(AddInformationAboutUserViewModel model)
         {
-            var objFromdb = _context.User.AsNoTracking().FirstOrDefault(u => u.Id == user.Id);
+            var objFromdb = _context.User.AsNoTracking().FirstOrDefault(u => u.Id == model.Id);
             if (objFromdb == null)
             {
                 return NotFound();
@@ -154,7 +165,7 @@ namespace TodooList.Controllers
                             {
                                 fileimages[0].CopyTo(fileStream);
                             }
-                        }                        
+                        }
                     }
                     else
                     {
@@ -163,9 +174,15 @@ namespace TodooList.Controllers
                             fileimages[0].CopyTo(fileStream);
                         }
                     }
-                    user.Image = imageName + imageextension;
+                    model.Image = imageName + imageextension;
                 }
-                _context.User.Update(user);
+                User qwer = _context.User.Find(model.Id);
+                qwer.Image = model.Image;
+                qwer.Year = model.Year;
+                qwer.Name = model.Name;
+
+
+                _context.User.Update(qwer);
                 _context.SaveChanges();
                 return RedirectToAction("index");
             }

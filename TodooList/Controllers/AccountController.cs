@@ -52,21 +52,24 @@ namespace TodooList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            User user = await _context.User.FirstOrDefaultAsync(u => u.Email == model.Email);
-            if (user==null)
+            if (ModelState.IsValid)
             {
-                _context.User.Add(new User {Name=model.Name, Email = model.Email, Password = model.Password });
-                Role userRole = await _context.Role.FirstOrDefaultAsync(r => r.Name == "user");
+                User user = await _context.User.FirstOrDefaultAsync(u => u.Email == model.Email);
+                if (user == null)
+                {
+                    user = new User { Name = model.Name, Email = model.Email, Password = model.Password };
+                    Role userRole = await _context.Role.FirstOrDefaultAsync(r => r.Name == "user");
 
-                if (userRole != null)
-                    user.Role = userRole;
-                _context.User.Add(user);
+                    if (userRole != null)
+                        user.Role = userRole;
+                    _context.User.Add(user);
 
-                await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
 
-                await Authenticate(user);
+                    await Authenticate(user);
 
-                return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home");
+                }
             }
             else
             {
