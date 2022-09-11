@@ -1,0 +1,40 @@
+﻿@model TodooList.Models.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>Register</h1>
+
+
+ <form asp-action="Register" asp-controller="Account" asp-antiforgery="true">
+
+     <div class="validation" asp-validation-summary="ModelOnly"/>
+
+     <div>
+         <div class="form-group">
+             <label asp-for="Name">Enter Email</label><br />
+             <input type="text" asp-for="Name"/>
+             <span asp-validation-for="Name"/>
+         </div>
+         <div class="form-group">
+             <label asp-for="Email">Enter Email</label><br />
+             <input type="text" asp-for="Email"/>
+             <span asp-validation-for="Email"/>
+         </div>
+         <div class="form-group">
+              <label asp-for="Password">Enter Password</label><br />
+             <input type="text" asp-for="Password"/>
+             <span asp-validation-for="Password"/>
+         </div>
+
+         <div class="form-group">
+              <label asp-for="PasswordConfirm">Enter Password</label><br />
+             <input type="text" asp-for="PasswordConfirm"/>
+             <span asp-validation-for="PasswordConfirm"/>
+         </div>
+
+         <div class="form-group">
+             <input type="submit" value="Login" class="btn btn-outline-dark"
+         </div>
+     </div>
+ </form>

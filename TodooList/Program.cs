@@ -12,6 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AppDBContext")));
 
+
+builder.Services.AddAuthentication()
+    .AddCookie(options =>
+    { options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login"); });
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -40,7 +45,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 
