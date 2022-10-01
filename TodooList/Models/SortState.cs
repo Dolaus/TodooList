@@ -1,6 +1,6 @@
 ﻿namespace TodooList.Models
 {
-    public enum FilterState
+    public enum SortState
     {
         NameAsc,    
         NameDesc,

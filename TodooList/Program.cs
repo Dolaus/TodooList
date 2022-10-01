@@ -13,19 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AppDBContext")));
 
-
-//services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-//               .AddCookie(options => //CookieAuthenticationOptions
-//               {
-//                   options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-//                   options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-//               });
-
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    { options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-      options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-    });
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                    options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                });
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -56,7 +50,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllerRoute(
     name: "default",

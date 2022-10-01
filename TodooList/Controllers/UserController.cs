@@ -23,7 +23,7 @@ namespace TodooList.Controllers
             _paginator = paginator;
         }
 
-        public async Task<IActionResult> Index(string searchstring,int page=1)
+        public async Task<IActionResult> Index(string searchstring, SortState sortState,int page=1)
         {
             IQueryable<User> source= _context.User.Include(i => i.TodoList);
 
@@ -32,7 +32,7 @@ namespace TodooList.Controllers
             return View(await _paginator.Pagination(3, source, page)) ;
 
         }
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
@@ -47,11 +47,12 @@ namespace TodooList.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            return View();
+            CreateUserViewModel model = new CreateUserViewModel();
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(User user)
+        public async Task<IActionResult> Create(CreateUserViewModel model)
         {
             
             if (ModelState.IsValid)
@@ -68,11 +69,21 @@ namespace TodooList.Controllers
                     {
                         fileimages[0].CopyTo(fileStream);
                     }
-                    user.Image = imageName + imageextension;
+                    model.Image = imageName + imageextension;
                 }
-            
-                _context.User.Add(user);
-                _context.SaveChanges();
+                Role role = _context.Role.FirstOrDefault(u => u.Name == "user");
+                if (role != null)
+                {
+                    User user = new User();
+                    user.Name = model.Name;
+                    user.Email = model.Email;
+                    user.Year = model.Year;
+                    user.Role = role;
+                    user.Id = model.Id;
+                    user.Password = model.Password;
+                    _context.User.Add(user);
+                    _context.SaveChanges();
+                }
                 return RedirectToAction("Index");
             }
             else { return View(); } 
@@ -127,7 +138,7 @@ namespace TodooList.Controllers
             {
                 return NotFound();
             }
-            var model = new AddInformationAboutUserViewModel()
+            var model = new EditUserViewModel()
             {
                 Id = user.Id,
                 Image = user.Image,
@@ -138,7 +149,7 @@ namespace TodooList.Controllers
             return View(model);
         }
         [HttpPost]
-        public IActionResult Edit(AddInformationAboutUserViewModel model)
+        public IActionResult Edit(EditUserViewModel model)
         {
             var objFromdb = _context.User.AsNoTracking().FirstOrDefault(u => u.Id == model.Id);
             if (objFromdb == null)
