@@ -210,5 +210,16 @@ namespace TodooList.Controllers
             }
             return View();
         }
+        [HttpGet]
+        public IActionResult AboutUser()
+        {
+            User user = _context.User.FirstOrDefault(u=> u.Email == User.Identity.Name);
+            if (user!=null)
+            {
+                return View(user);
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }
