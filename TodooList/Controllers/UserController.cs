@@ -29,6 +29,17 @@ namespace TodooList.Controllers
 
             source = _filtrator.Filter(source, searchstring);
 
+            ViewData["NameSort"]=sortState==SortState.NameAsc?SortState.NameDesc:SortState.NameAsc;
+            ViewData["YearSort"] = sortState==SortState.YearAsc?SortState.YearDesc:SortState.YearAsc;
+
+            source = sortState switch
+            {
+                SortState.NameAsc => source.OrderBy(s => s.Name),
+                SortState.NameDesc => source.OrderByDescending(s => s.Name),
+                SortState.YearDesc => source.OrderByDescending(s => s.Year),
+                SortState.YearAsc => source.OrderBy(s => s.Year),
+                _ => source.OrderBy(s=>s.Id)
+            };
             return View(await _paginator.Pagination(3, source, page)) ;
 
         }

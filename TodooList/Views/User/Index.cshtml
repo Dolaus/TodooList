@@ -20,21 +20,25 @@
 <table class="table">
     <thead>
 
-       @* <tr>
+        <tr>
             <th>
-                @Html.DisplayNameFor(model => model.) 
+                Id
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].Name)
+              <a asp-action="Index" asp-route-sortState="@ViewBag.NameSort">
+                Name
+            </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].Year)
+               <a asp-action="Index" asp-route-sortState="@ViewBag.YearSort">
+                Year
+            </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model[0].TodoList)
+               ToDoList
             </th>
             <th></th>
-        </tr>*@
+        </tr>
     </thead>
     <tbody>
 @foreach (var item in Model.Users) {
