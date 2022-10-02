@@ -38,12 +38,17 @@
         <dd class="col-sm-10">
 
         </dd>
+            <td>
+                <a asp-action="Edit" asp-route-email="@Model.Email">Edit User</a> 
+                <a asp-action="Delete" asp-route-email="@Model.Email">Delete User</a>
+            </td>         
+
+          
          @if (Model.TodoList.Count > 0)
         {
             @foreach (var item in Model.TodoList)
             {
                 <dd class="col-sm-10">
-                    
                      @Html.DisplayFor(modelItem => item.Description)
                      <a asp-controller="ToDo" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                      <a asp-controller="ToDo" asp-action="Delete" asp-route-id="@item.Id">Delete</a>

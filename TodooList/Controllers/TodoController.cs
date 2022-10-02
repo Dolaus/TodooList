@@ -28,14 +28,21 @@ namespace TodooList.Controllers
             };
             _context.ToDo.Add(newTodo);
             _context.SaveChanges();
-
-            return RedirectToAction("Details", "User",new {id=id});
+            if (User.IsInRole("admin"))
+            {
+                return RedirectToAction("Details", "User", new { id = id });
+            }
+            else
+            {
+                return RedirectToAction("AboutUser", "User");
+            }
+            
         }
 
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            if (id==null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -46,7 +53,14 @@ namespace TodooList.Controllers
             }
             _context.ToDo.Remove(todo);
             _context.SaveChanges();
-            return RedirectToAction("Details", "User",new { id = todo.UserId }) ; 
+            if (User.IsInRole("admin"))
+            {
+                return RedirectToAction("Details", "User", new { id = todo.UserId });
+            }
+            else
+            {
+                return RedirectToAction("AboutUser", "User");
+            }
         }
 
 
@@ -75,7 +89,14 @@ namespace TodooList.Controllers
             {
                 _context.ToDo.Update(todos);
                 _context.SaveChanges();
-                return RedirectToAction("Index", "User");
+                if (User.IsInRole("admin"))
+                {
+                    return RedirectToAction("Details", "User", new { id = todo.UserId });
+                }
+                else
+                {
+                    return RedirectToAction("AboutUser", "User");
+                }
             }
             return View();
         }

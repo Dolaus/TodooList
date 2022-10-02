@@ -33,7 +33,6 @@ namespace WebApplication2.Controllers
                 User user = await _context.User.FirstOrDefaultAsync(u => u.Email == model.Email);
                 if (user == null)
                 {
-                    // добавляем пользователя в бд
                     user = new User { Email = model.Email, Password = model.Password,Name=model.Name };
                     Role userRole = await _context.Role.FirstOrDefaultAsync(r => r.Name == "user");
                     if (userRole != null)
@@ -42,12 +41,12 @@ namespace WebApplication2.Controllers
                     _context.User.Add(user);
                     await _context.SaveChangesAsync();
 
-                    await Authenticate(user); // аутентификация
+                    await Authenticate(user);
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "User");
                 }
                 else
-                    ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                    ModelState.AddModelError("", "Невірний логін або пароль");
             }
             return View(model);
         }
@@ -67,17 +66,16 @@ namespace WebApplication2.Controllers
                     .FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
                 if (user != null)
                 {
-                    await Authenticate(user); // аутентификация
+                    await Authenticate(user); 
 
                     return RedirectToAction("Index", "Home");
                 }
-                ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                ModelState.AddModelError("", "Невірний логін або пароль");
             }
             return View(model);
         }
         private async Task Authenticate(User user)
         {
-            // создаем один claim
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
@@ -85,7 +83,6 @@ namespace WebApplication2.Controllers
             };
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
            
-            // установка аутентификационных куки
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
         public async Task<IActionResult> Logout()

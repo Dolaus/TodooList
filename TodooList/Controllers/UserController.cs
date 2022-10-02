@@ -8,7 +8,7 @@ using TodooList.Services.Interface;
 
 namespace TodooList.Controllers
 {
-    
+
     public class UserController : Controller
     {
         private readonly AppDBContext _context;
@@ -23,14 +23,14 @@ namespace TodooList.Controllers
             _paginator = paginator;
         }
 
-        public async Task<IActionResult> Index(string searchstring, SortState sortState,int page=1)
+        public async Task<IActionResult> Index(string searchstring, SortState sortState, int page = 1)
         {
-            IQueryable<User> source= _context.User.Include(i => i.TodoList);
+            IQueryable<User> source = _context.User.Include(i => i.TodoList);
 
             source = _filtrator.Filter(source, searchstring);
 
-            ViewData["NameSort"]=sortState==SortState.NameAsc?SortState.NameDesc:SortState.NameAsc;
-            ViewData["YearSort"] = sortState==SortState.YearAsc?SortState.YearDesc:SortState.YearAsc;
+            ViewData["NameSort"] = sortState == SortState.NameAsc ? SortState.NameDesc : SortState.NameAsc;
+            ViewData["YearSort"] = sortState == SortState.YearAsc ? SortState.YearDesc : SortState.YearAsc;
 
             source = sortState switch
             {
@@ -38,20 +38,20 @@ namespace TodooList.Controllers
                 SortState.NameDesc => source.OrderByDescending(s => s.Name),
                 SortState.YearDesc => source.OrderByDescending(s => s.Year),
                 SortState.YearAsc => source.OrderBy(s => s.Year),
-                _ => source.OrderBy(s=>s.Id)
+                _ => source.OrderBy(s => s.Id)
             };
-            return View(await _paginator.Pagination(3, source, page)) ;
+            return View(await _paginator.Pagination(5, source, page));
 
         }
-        [Authorize(Roles = "admin")]
+
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id==null)
+            if (id == null)
             {
                 return NotFound();
             }
-            var user = _context.User.Include(u => u.TodoList).ToList().Find(u=>u.Id==id);
+            var user = _context.User.Include(u => u.TodoList).ToList().Find(u => u.Id == id);
             return View(user);
         }
 
@@ -65,7 +65,7 @@ namespace TodooList.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
-            
+
             if (ModelState.IsValid)
             {
                 var fileimages = HttpContext.Request.Form.Files;
@@ -97,20 +97,20 @@ namespace TodooList.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            else { return View(); } 
+            else { return View(); }
         }
 
         [HttpGet]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int? id, string? email)
         {
-            var user = _context.User.Include(i=>i.TodoList).FirstOrDefault(u=>u.Id==id);
+            var user = _context.User.Include(i => i.TodoList).FirstOrDefault(u => u.Id == id||u.Email== email);
             if (user == null)
             {
                 return NotFound();
             }
             return View(user);
         }
-
+ 
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -138,13 +138,22 @@ namespace TodooList.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int? id, string? email)
         {
-            if (id == null || id == 0)
+            if (id == null&& email == null || id == 0)
             {
                 return NotFound();
             }
-            User user = _context.User.Find(id);
+            User user = new User();
+            if (id!=null)
+            {
+                user = _context.User.Find(id);
+            }
+            if (email != null)
+            {
+                user = _context.User.FirstOrDefault(u=>u.Email== email);
+            }
+
             if (user == null)
             {
                 return NotFound();
@@ -159,6 +168,7 @@ namespace TodooList.Controllers
 
             return View(model);
         }
+      
         [HttpPost]
         public IActionResult Edit(EditUserViewModel model)
         {
@@ -210,10 +220,12 @@ namespace TodooList.Controllers
             }
             return View();
         }
+        [Authorize(Roles = "admin,user")]
         [HttpGet]
         public IActionResult AboutUser()
         {
-            User user = _context.User.FirstOrDefault(u=> u.Email == User.Identity.Name);
+            User user = _context.User.Include(u => u.TodoList).FirstOrDefault(u=> u.Email == User.Identity.Name);
+            
             if (user!=null)
             {
                 return View(user);
