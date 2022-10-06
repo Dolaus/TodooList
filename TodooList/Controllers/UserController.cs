@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using TodooList.Data;
 using TodooList.Models;
 using TodooList.Models.ViewModels;
+using TodooList.Repositories.Interfaces;
 using TodooList.Services.Interface;
 
 namespace TodooList.Controllers
@@ -11,16 +12,18 @@ namespace TodooList.Controllers
 
     public class UserController : Controller
     {
+        private readonly IUserControllable _userControllable;
         private readonly AppDBContext _context;
         private readonly IWebHostEnvironment _webHostEnviroment;
         private readonly IFiltrator<User> _filtrator;
         private readonly IPaginator<User> _paginator;
-        public UserController(AppDBContext context, IWebHostEnvironment webHostEnviroment, IFiltrator<User> filtrator, IPaginator<User> paginator)
+        public UserController(IUserControllable userControllable,AppDBContext context, IWebHostEnvironment webHostEnviroment, IFiltrator<User> filtrator, IPaginator<User> paginator)
         {
             _webHostEnviroment = webHostEnviroment;
             _context = context;
             _filtrator = filtrator;
             _paginator = paginator;
+            _userControllable = userControllable;
         }
 
         public async Task<IActionResult> Index(string searchstring, SortState sortState, int page = 1)
@@ -51,7 +54,7 @@ namespace TodooList.Controllers
             {
                 return NotFound();
             }
-            var user = _context.User.Include(u => u.TodoList).ToList().Find(u => u.Id == id);
+            var user = _userControllable.FindUserById(id);
             return View(user);
         }
 
@@ -92,8 +95,8 @@ namespace TodooList.Controllers
                     user.Role = role;
                     user.Id = model.Id;
                     user.Password = model.Password;
-                    _context.User.Add(user);
-                    _context.SaveChanges();
+
+                    _userControllable.AddUser(user);
                 }
                 return RedirectToAction("Index");
             }
@@ -103,7 +106,7 @@ namespace TodooList.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int? id, string? email)
         {
-            var user = _context.User.Include(i => i.TodoList).FirstOrDefault(u => u.Id == id||u.Email== email);
+            var user = _userControllable.FindUserById(id);
             if (user == null)
             {
                 return NotFound();
@@ -132,8 +135,7 @@ namespace TodooList.Controllers
                     System.IO.File.Delete(oldFile);
                 }
             }
-           _context.User.Remove(user);
-            _context.SaveChanges();
+            _userControllable.RemoveUser(user);
             return RedirectToAction("Index");
         }
 
@@ -151,7 +153,7 @@ namespace TodooList.Controllers
             }
             if (email != null)
             {
-                user = _context.User.FirstOrDefault(u=>u.Email== email);
+                user = _userControllable.FindUserByEmail(email);
             }
 
             if (user == null)
@@ -213,9 +215,7 @@ namespace TodooList.Controllers
                 qwer.Year = model.Year;
                 qwer.Name = model.Name;
 
-
-                _context.User.Update(qwer);
-                _context.SaveChanges();
+                _userControllable.UpdateUser(qwer);
                 return RedirectToAction("index");
             }
             return View();

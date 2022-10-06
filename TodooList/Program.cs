@@ -27,7 +27,7 @@ builder.Services.AddControllersWithViews();
 
 
 builder.Services.AddScoped<ITodoControllable, TodoControllable>();
-
+builder.Services.AddScoped<IUserControllable, UserControllable>();
 builder.Services.AddScoped<IFiltrator<User>,Filtrator>();
 builder.Services.AddScoped<IPaginator<User>,Paginator>();
 
