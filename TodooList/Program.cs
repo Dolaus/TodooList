@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using TodooList.Data;
 using TodooList.Models;
+using TodooList.Repositories.Implementations;
+using TodooList.Repositories.Interfaces;
 using TodooList.Services.Class;
 using TodooList.Services.Interface;
 
@@ -22,6 +24,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+builder.Services.AddScoped<ITodoControllable, TodoControllable>();
 
 builder.Services.AddScoped<IFiltrator<User>,Filtrator>();
 builder.Services.AddScoped<IPaginator<User>,Paginator>();

@@ -2,15 +2,19 @@
 using Microsoft.EntityFrameworkCore;
 using TodooList.Data;
 using TodooList.Models;
+using TodooList.Repositories.Implementations;
+using TodooList.Repositories.Interfaces;
 
 namespace TodooList.Controllers
 {
     public class TodoController : Controller
     {
         private readonly AppDBContext _context;
-        public TodoController(AppDBContext context)
+        private readonly ITodoControllable _todoControllable;
+        public TodoController(AppDBContext context, ITodoControllable todoControllable)
         {
             _context = context;
+            _todoControllable= todoControllable;
         }
         [HttpGet]
         public IActionResult Create()
@@ -26,8 +30,7 @@ namespace TodooList.Controllers
                 Description = todo.Description,
                 UserId = id
             };
-            _context.ToDo.Add(newTodo);
-            _context.SaveChanges();
+            _todoControllable.AddTodo(newTodo);
             if (User.IsInRole("admin"))
             {
                 return RedirectToAction("Details", "User", new { id = id });
@@ -46,13 +49,12 @@ namespace TodooList.Controllers
             {
                 return NotFound();
             }
-            var todo = _context.ToDo.Find(id);
+            var todo = _todoControllable.FindTodoById(id);
             if (todo == null)
             {
                 return NotFound();
             }
-            _context.ToDo.Remove(todo);
-            _context.SaveChanges();
+            _todoControllable.RemoveTodo(todo);
             if (User.IsInRole("admin"))
             {
                 return RedirectToAction("Details", "User", new { id = todo.UserId });
@@ -65,7 +67,7 @@ namespace TodooList.Controllers
 
 
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int id)
         {
             if (id == null)
             {
@@ -82,16 +84,15 @@ namespace TodooList.Controllers
         [HttpPost]
         public IActionResult Edit(ToDo todo,int id)
         {
-            var todos = _context.ToDo.Find(id);
+            var todos = _todoControllable.FindTodoById(id);
             todos.Description=todo.Description;
             todos.IsComplete = todo.IsComplete;
             //if (ModelState.IsValid)
             {
-                _context.ToDo.Update(todos);
-                _context.SaveChanges();
+                _todoControllable.EditTodo(todos);
                 if (User.IsInRole("admin"))
                 {
-                    return RedirectToAction("Details", "User", new { id = todo.UserId });
+                    return RedirectToAction("Details", "User", new { id = todos.UserId });
                 }
                 else
                 {
