@@ -4,10 +4,10 @@ namespace TodooList.Models.ViewModels
 {
     public class LoginModel
     {
-        [Required(ErrorMessage = "Не указан Email")]
+        [Required(ErrorMessage = "Не вказаний Email")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Не указан пароль")]
+        [Required(ErrorMessage = "Не вказаний пароль")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
     }

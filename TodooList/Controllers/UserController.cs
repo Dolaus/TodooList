@@ -25,8 +25,12 @@ namespace TodooList.Controllers
             _paginator = paginator;
             _userControllable = userControllable;
         }
-
-        public async Task<IActionResult> Index(string searchstring, SortState sortState, int page = 1)
+        public async Task<IActionResult> Index()
+        {
+            return View();
+        }
+        [Authorize(Roles ="admin")]
+        public async Task<IActionResult> Admin(string searchstring, SortState sortState, int page = 1)
         {
             IQueryable<User> source = _context.User.Include(i => i.TodoList);
 
@@ -68,8 +72,9 @@ namespace TodooList.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
-
-            if (ModelState.IsValid)
+            var a = _context.User.FirstOrDefault(i=>i.Email==model.Email);
+            
+            if (ModelState.IsValid&&a==null)
             {
                 var fileimages = HttpContext.Request.Form.Files;
                 if (fileimages.Count > 0)
@@ -98,7 +103,7 @@ namespace TodooList.Controllers
 
                     _userControllable.AddUser(user);
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("Admin");
             }
             else { return View(); }
         }
@@ -136,7 +141,7 @@ namespace TodooList.Controllers
                 }
             }
             _userControllable.RemoveUser(user);
-            return RedirectToAction("Index");
+            return RedirectToAction("Admin");
         }
 
         [HttpGet]
@@ -216,7 +221,11 @@ namespace TodooList.Controllers
                 qwer.Name = model.Name;
 
                 _userControllable.UpdateUser(qwer);
-                return RedirectToAction("index");
+                if (User.IsInRole("admin"))
+                {
+                    return RedirectToAction("Admin");
+                }
+                return RedirectToAction("AboutUser");
             }
             return View();
         }
@@ -231,7 +240,7 @@ namespace TodooList.Controllers
                 return View(user);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Admin");
         }
     }
 }

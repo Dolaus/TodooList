@@ -1,24 +1,25 @@
 ﻿@model TodooList.Models.ViewModels.LoginModel
  
-<h2>Вход на сайт</h2>
+<h2>Вхід на сайт</h2>
  
-<a asp-action="Register" asp-controller="Account">Регистрация</a>
+<a class="btn btn-primary" asp-action="Register" asp-controller="Account">Зареєструватися</a>
  
 <form asp-action="Login" asp-controller="Account" asp-anti-forgery="true">
     <div class="validation" asp-validation-summary="ModelOnly"></div>
     <div>
         <div class="form-group">
             <label asp-for="Email">Введите Email</label>
-            <input type="text" asp-for="Email" />
+            <input class ="form-control" type="text" asp-for="Email" />
             <span asp-validation-for="Email" />
         </div>
         <div class="form-group">
             <label asp-for="Password">Введите пароль</label>
-            <input asp-for="Password" />
+            <input class="form-control"  asp-for="Password" />
             <span asp-validation-for="Password" />
         </div>
-        <div class="form-group">
-            <input type="submit" value="Войти" class="btn" />
+        <br />
+        <div >
+            <input class=" btn  btn-primary " type="submit" value="Вхід" class="btn" />
         </div>
     </div>
 </form>

@@ -46,7 +46,7 @@ namespace WebApplication2.Controllers
                     return RedirectToAction("Index", "User");
                 }
                 else
-                    ModelState.AddModelError("", "Невірний логін або пароль");
+                    ModelState.AddModelError("", "Користувач існує");
             }
             return View(model);
         }
@@ -68,7 +68,7 @@ namespace WebApplication2.Controllers
                 {
                     await Authenticate(user); 
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "User");
                 }
                 ModelState.AddModelError("", "Невірний логін або пароль");
             }

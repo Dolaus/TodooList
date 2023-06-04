@@ -24,21 +24,25 @@ namespace TodooList.Controllers
         [HttpPost]
         public IActionResult Create(ToDo todo, int id)
         {
-            ToDo newTodo = new ToDo()
+            if (todo.Description != null && todo.Description != "")
             {
-                IsComplete = todo.IsComplete,
-                Description = todo.Description,
-                UserId = id
-            };
-            _todoControllable.AddTodo(newTodo);
-            if (User.IsInRole("admin"))
-            {
-                return RedirectToAction("Details", "User", new { id = id });
+                ToDo newTodo = new ToDo()
+                {
+                    IsComplete = todo.IsComplete,
+                    Description = todo.Description,
+                    UserId = id
+                };
+                _todoControllable.AddTodo(newTodo);
+                if (User.IsInRole("admin"))
+                {
+                    return RedirectToAction("Details", "User", new { id = id });
+                }
+                else
+                {
+                    return RedirectToAction("AboutUser", "User");
+                }
             }
-            else
-            {
-                return RedirectToAction("AboutUser", "User");
-            }
+            return View();
             
         }
 
@@ -87,7 +91,7 @@ namespace TodooList.Controllers
             var todos = _todoControllable.FindTodoById(id);
             todos.Description=todo.Description;
             todos.IsComplete = todo.IsComplete;
-            //if (ModelState.IsValid)
+            if (todo.Description!=null&& todo.Description != "" )
             {
                 _todoControllable.EditTodo(todos);
                 if (User.IsInRole("admin"))

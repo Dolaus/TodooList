@@ -3,10 +3,9 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Детальна інформація</h1>
 
 <div>
-    <h4>Details</h4>
     
     </hr>
       <div class="col-4">
@@ -14,13 +13,13 @@
                  </div>
     <dl class="row">
         <dt class="col-sm-2">
-             @Html.DisplayNameFor(model => model.Name)
+             Ім'я
         </dt>
         <dd class="col-sm-10">
              @Html.DisplayFor(modelItem => modelItem.Name)
         </dd>
         <dt class="col-sm-2">
-             @Html.DisplayNameFor(model => model.Year)
+            Рік народження
         </dt>
         <dd class="col-sm-10">
              @Html.DisplayFor(modelItem => modelItem.Year)
@@ -28,11 +27,11 @@
 
 
          <h4>
-             @Html.DisplayNameFor(model => model.TodoList)
+            Особисті справи
         </h4>
         <div class="col-6 text-right">
             <a asp-controller="Todo" asp-action="Create" asp-route-id="@Model.Id" class=" btn btn-primary">
-                 Create new Todo
+                Додати справу користувачу
             </a> 
         </div>
         <dd class="col-sm-10">
@@ -45,8 +44,8 @@
                 <dd class="col-sm-10">
                     
                      @Html.DisplayFor(modelItem => item.Description)
-                     <a asp-controller="ToDo" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                     <a asp-controller="ToDo" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                     <a asp-controller="ToDo" asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                     <a asp-controller="ToDo" asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
                 </dd>  
             }
         }

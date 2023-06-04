@@ -1,0 +1,96 @@
+﻿@model IndexViewModel
+@{
+    ViewData["Title"] = "Admin";
+}
+
+<h1>Адмін панель</h1>
+@if (User.IsInRole("admin"))
+{
+<p>
+    <a asp-action="Create">Створити нового користувача</a>
+</p>    
+}
+
+<form asp-controller="User" asp-action="Admin" method="get">
+    <p>
+        Ввід: <input type="text" asp-for="searchstring"/>
+        <input type="submit" value="Пошук" />
+    </p>
+</form>
+<table class="table ">
+    <thead>
+
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+              <a asp-action="Admin" asp-route-sortState="@ViewBag.NameSort">
+                Ім'я
+            </a>
+            </th>
+            <th>
+               <a asp-action="Admin" asp-route-sortState="@ViewBag.YearSort">
+                Рік народження
+            </a>
+            </th>
+            <th>
+               Перша справа
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Users) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Year)
+            </td>
+            <td>
+                @if (item.TodoList.Count>0)
+                    {
+                        @Html.DisplayFor(modelItem => item.TodoList[0].Description)
+                    }
+                    else
+                    {
+                    @Html.DisplayFor(modelItem => item.TodoList);     
+                    }
+                   
+            </td>
+            @if (User.IsInRole("admin"))
+                {
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+            </td>         
+                }
+           
+        </tr>
+}
+       @if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="Admin"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="Admin"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}
+    </tbody>
+</table>

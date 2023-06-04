@@ -13,7 +13,7 @@ namespace TodooList.Data
         public AppDBContext(DbContextOptions<AppDBContext> options) 
            : base(options) 
         {
-            //Database.EnsureDeleted();
+           // Database.EnsureDeleted();
             Database.EnsureCreated(); 
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -22,7 +22,7 @@ namespace TodooList.Data
             string userRoleName = "user";
             string adminName="Admin";
 
-            string adminEmail = "admin@mail.ru";
+            string adminEmail = "admin@gmail.com";
             string adminPassword = "123456";
 
             Role adminRole = new Role { Id = 1, Name = adminRoleName };
